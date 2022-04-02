@@ -337,6 +337,7 @@ end
 
 function input.eventHandlers.keyreleased(btn, btncode)
 	local captured = false
+
 	if input.subscriptions.keyreleased then
 		for index, sub in ipairs(input.subscriptions.keyreleased) do
 			if sub.active and sub.stack.element.settings.active then
@@ -351,6 +352,7 @@ end
 
 function input.eventHandlers.textinput(text)
 	local captured = false
+
 	if input.subscriptions.textinput then
 		for index, sub in ipairs(input.subscriptions.textinput) do
 			if sub.active and sub.stack.element.settings.active then
@@ -365,6 +367,33 @@ end
 
 function input.eventHandlers.mousemoved(x, y, dx, dy)
 	local captured = false
+
+	if input.subscriptions.mouseover then
+		for index, sub in ipairs(input.subscriptions.mouseover) do
+			if sub.active and sub.stack.element.settings.active and sub:checkInside(x, y) then
+				sub:emit(x-sub.x, y-sub.y, dx, dy)
+				captured = true
+			end
+		end
+	end
+
+	if input.subscriptions.mousein then
+		for index, sub in ipairs(input.subscriptions.mousein) do
+			if sub.active and sub.stack.element.settings.active and sub:checkInside(x, y) and sub:checkOuside(x-dx, y-dy) then
+				sub:emit(x-sub.x, y-sub.y, dx, dy)
+				captured = true
+			end
+		end
+	end
+
+	if input.subscriptions.mouseout then
+		for index, sub in ipairs(input.subscriptions.mouseout) do
+			if sub.active and sub.stack.element.settings.active and sub:checkOutside(x, y) and sub:checkInside(x-dx, y-dy) then
+				sub:emit(x-sub.x, y-sub.y, dx, dy)
+				captured = true
+			end
+		end
+	end
 
 	if input.subscriptions.hover then
 		for index, sub in ipairs(input.subscriptions.hover) do

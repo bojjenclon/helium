@@ -11,7 +11,10 @@ return function (base)
 	local activeContext = context.getContext()
 	return setmetatable({},{
 			__index = function(t, index)
-				local f = fakeBase[index] ~= nil and fakeBase[index] or base[index]
+				local f = fakeBase[index]
+				if f == nil then
+					f = base[index]
+				end
 				return f
 			end,
 			__newindex = function(t, index, val)
